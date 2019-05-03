@@ -1,4 +1,5 @@
 .depend
+.coqdeps.d
 *.annot
 *.cmo
 *.cma
@@ -26,6 +27,7 @@ coqthmdep
 dpd2dot
 dpdusage
 Make_coq
+Make_coq.conf
 CoqMakefile.conf
 dpd_lex.ml
 dpd_parse.ml
