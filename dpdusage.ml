@@ -13,6 +13,9 @@ module Node = Dpd_compute.Node
 let version_option = ref false
 let print_path_option = ref true
 
+let print_defs = ref false
+let print_props = ref false
+
 let threshold_option = ref 0
 
 let spec_args = [
@@ -42,12 +45,28 @@ let spec_args = [
       ": do not print path");
   ("-v", Arg.Set version_option,
       ": print version and exit");
+  ("-print-defs", Arg.Set print_defs,
+      ": print only non-Prop objects");
+  ("-print-props", Arg.Set print_props,
+      ": print only Prop objects");
 ]
 
 let print_usage g t =
+  let is_prop n =
+    match Node.bool_attrib "prop" n with
+    | Some true -> true
+    | _ -> false
+  in
+  let is_def n =
+    match Node.bool_attrib "prop" n with
+    | Some false -> true
+    | _ -> false
+  in
   let print_node n =
     let d = (G.in_degree g n) in
-    if d <= t then
+    if d <= t && ((not !print_defs && not !print_props) ||
+      ((!print_defs && is_def n) || (!print_props && is_prop n)))
+    then
       if !print_path_option then
         let prefix = match Node.get_attrib "path" n with
           | None -> ""
