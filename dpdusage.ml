@@ -16,10 +16,18 @@ let print_path_option = ref true
 let threshold_option = ref 0
 
 let spec_args = [
-  ("-with-defs", Arg.Set Dpd_compute.with_defs,
-      ": show everything (default)");
-  ("-without-defs", Arg.Clear Dpd_compute.with_defs,
-      ": show only Prop objects");
+  ("-with-all", Arg.Tuple
+    [Arg.Clear Dpd_compute.without_defs;
+     Arg.Clear Dpd_compute.without_props],
+      ": show all objects (default)");
+  ("-without-defs", Arg.Tuple
+    [Arg.Set Dpd_compute.without_defs;
+     Arg.Clear Dpd_compute.without_props],
+      ": hide non-Prop objects");
+  ("-without-props", Arg.Tuple
+    [Arg.Clear Dpd_compute.without_defs;
+     Arg.Set Dpd_compute.without_props],
+      ": hide Prop objects");
   ("-rm-trans", Arg.Set Dpd_compute.reduce_trans,
       ": remove transitive dependencies (default)");
   ("-keep-trans", Arg.Clear Dpd_compute.reduce_trans,

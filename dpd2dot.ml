@@ -18,10 +18,18 @@ let set_graphname name = graphname := Some name
 let spec_args = [
   ("-o", Arg.String set_out_file,
       ": name of output file (default: name of input file .dot)");
-  ("-with-defs", Arg.Set Dpd_compute.with_defs,
-      ": show everything (default)");
-  ("-without-defs", Arg.Clear Dpd_compute.with_defs,
-      ": show only Prop objects");
+  ("-with-all", Arg.Tuple
+    [Arg.Clear Dpd_compute.without_defs;
+     Arg.Clear Dpd_compute.without_props],
+      ": show all objects (default)");
+  ("-without-defs", Arg.Tuple
+    [Arg.Set Dpd_compute.without_defs;
+     Arg.Clear Dpd_compute.without_props],
+      ": hide non-Prop objects");
+  ("-without-props", Arg.Tuple
+    [Arg.Clear Dpd_compute.without_defs;
+     Arg.Set Dpd_compute.without_props],
+      ": hide Prop objects");
   ("-rm-trans", Arg.Set Dpd_compute.reduce_trans,
       ": remove transitive dependencies (default)");
   ("-keep-trans", Arg.Clear Dpd_compute.reduce_trans,

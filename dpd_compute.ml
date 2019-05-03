@@ -8,7 +8,8 @@
 (*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*)
 
 let debug_flag = ref false
-let with_defs = ref true
+let without_defs = ref false
+let without_props = ref false
 let reduce_trans = ref true
 
 let pp intro format = Format.printf "%s" intro ; Format.printf format
@@ -165,13 +166,21 @@ let remove_node g n =
     List.iter transfer_edges (G.pred g n);
     G.remove_vertex g n (* also remove edges n -> s *)
 
-let remove_some_nodes g =
+let remove_def_nodes g =
   let do_v v = match Node.bool_attrib "prop" v with
-    | None | Some false -> remove_node g v
-    | Some true -> ()
+    | Some false -> remove_node g v
+    | _ -> ()
+  in
+  G.iter_vertex do_v g
+
+let remove_prop_nodes g =
+  let do_v v = match Node.bool_attrib "prop" v with
+    | Some true -> remove_node g v
+    | _ -> ()
   in
   G.iter_vertex do_v g
 
 let simplify_graph g =
-  if not !with_defs then remove_some_nodes g;
+  if !without_defs then remove_def_nodes g;
+  if !without_props then remove_prop_nodes g;
   if !reduce_trans then reduce_graph g;
